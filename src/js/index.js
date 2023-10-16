@@ -1,5 +1,5 @@
-import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
+import Notiflix from 'notiflix';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { getImages } from './api';
@@ -9,7 +9,6 @@ let query = null;
 let perPage = 40;
 
 let simpleLightbox;
-let loadedImages = [];
 
 const refs = {
   form: document.querySelector('#search-form'),
@@ -34,8 +33,10 @@ function createMarkup(arr) {
         downloads,
       } = arr;
 
-      return `<div class="photo-card" id="${id}">
-  <img src="${webformatURL}" alt="${tags}" loading="${largeImageURL}" />
+      return `
+      
+      <div class="photo-card" id="${id}">
+  <a  href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="${largeImageURL}"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>: ${likes}
@@ -94,12 +95,11 @@ function onSearch(evt) {
     .finally(() => refs.form.reset());
 }
 
-createMarkup(loadedImages);
 function simpleLightboxList() {
   if (simpleLightbox) {
     simpleLightbox.refresh();
   } else {
-    simpleLightbox = new SimpleLightbox('.gallery', {
+    simpleLightbox = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionDelay: 250,
       enableKeyboard: true,
@@ -107,36 +107,35 @@ function simpleLightboxList() {
   }
 }
 
-// refs.buttonLoad.addEventListener('click', onButtonLoad);
-// let loading = false;
+refs.buttonLoad.addEventListener('click', onButtonLoad);
 
-async function onButtonLoad() {
-  // if (loading) {
-  //   return;
-  // }
-  // loading = true;
+function onButtonLoad() {
   page += 1;
-  const data = await getImages(query, page, perPage);
 
-  if (perPage * page >= data.totalHits) {
-    refs.buttonLoad.classList.add('hide');
-    Notiflix.Notify.success(
-      `We're sorry, but you've reached the end of search results.`
-    );
-  }
-
-  loadedImages = [...loadedImages, ...data.hits];
-  createMarkup(loadedImages);
-  // loading = false;
+  getImages(query, page, perPage)
+    .then(data => {
+      if (perPage * page >= data.totalHits) {
+        refs.buttonLoad.classList.add('hide');
+        Notiflix.Notify.success(
+          `We're sorry, but you've reached the end of search results.`
+        );
+      }
+      if (data.page === data.totalHits) {
+        refs.buttonLoad.classList.add('hide');
+      }
+      createMarkup(data.hits);
+      simpleLightboxList();
+    })
+    .catch(error => console.log(error));
 }
 
-window.addEventListener('scroll', onScroll);
+// window.addEventListener('scroll', onScroll);
 
-function onScroll() {
-  const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-  if (scrollTop + clientHeight >= scrollHeight - 200) {
-    onButtonLoad();
-  }
-}
+// function onScroll() {
+//   const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+//   if (scrollTop + clientHeight >= scrollHeight - 200) {
+//     onButtonLoad();
+//   }
+// }
 
-onScroll();
+// onScroll();
