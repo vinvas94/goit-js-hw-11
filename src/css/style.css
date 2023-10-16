@@ -1,27 +1,25 @@
-.hide {
-  display: none;
-}
-
 .search-form {
+  background-color: rgb(18, 73, 161);
   display: flex;
   justify-content: center;
   height: 40px;
   align-items: center;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
 }
 
 .search-form button {
   display: flex;
   height: 32px;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 input {
   margin-right: 16px;
   height: 32px;
-  border-radius: 12px;
+  border-radius: 4px;
 }
 
 .decor {
@@ -42,8 +40,8 @@ input {
 }
 
 .load-more {
-  margin: 0 auto;
   display: block;
+  margin: 0 auto;
   padding: 8px 10px;
   border-radius: 8px;
 }
@@ -53,4 +51,8 @@ input {
   margin-bottom: 10px;
   border: none;
   overflow: hidden;
+}
+
+.hide {
+  display: none;
 }
